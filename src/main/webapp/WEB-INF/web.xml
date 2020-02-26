@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list> 
+	
+	
+	<!-- spring容器，当服务器启动时，通过监听器，准备好spring容器 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<!-- 为了spring容器能够找到spring配置文件，从而创建对象，这里需要配置一个上下文参数 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:app.xml</param-value>
+	</context-param>
+	
+	
+	<servlet>
+		<servlet-name>hello</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:app.xml</param-value>
+		</init-param>
+	</servlet>
+	<!-- 因为在web.xml里面配置url-pattern用/使得全部链接link到MVC中，其中包括外部JS,CSS以及img链接。使得其全部失效。
+		解决办法有三：1、/换成/*.do.前面的/要不要？
+				2、使用Tomcat默认Servlet处理静态资源,该配置仅适用Tomcat容器
+				3、app.xml中配置<mvc:resources>标签
+	
+	 -->
+	<servlet-mapping>
+		<servlet-name>hello</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	 
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.jpg</url-pattern>
+		<url-pattern>*.css</url-pattern>
+		<url-pattern>*.img</url-pattern>
+		<url-pattern>*.js</url-pattern>
+		<url-pattern>*.gif</url-pattern>
+	</servlet-mapping>
+	
+	<filter>
+		<filter-name>encodingfilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingfilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- <error-page>
+		<error-code></error-code>
+		<exception-type>cn.sz.yj.util.StoreNotEnoughException</exception-type>
+		<location>/error.jsp</location>
+	</error-page> -->
+</web-app>
